@@ -71,6 +71,7 @@ enforcement.
       * [Custom Clock](#jws-read-clock-custom)
     * [Decompression](#jws-read-decompression)
     <!-- * [Error Handling](#jws-read-errors) -->
+* [Encrypted JWTs](#jwe)
 * [Compression](#compression)
   * [Custom Compression Codec](#compression-custom)
 * [JSON Processor](#json)
@@ -1183,7 +1184,10 @@ how to resolve your `CompressionCodec` to decompress the JWT.
 
 Please see the [Compression](#compression) section below to see how to decompress JWTs during parsing.
 
-<!-- TODO: ## Encrypted JWTs -->
+<a name="jwe"></a>
+## Encrypted JWTs
+
+TODO: NOTE: A128GCM, A192GCM, A256GCM algorithms require JDK 8 or BouncyCastle.
 
 <a name="compression"></a>
 ## Compression

@@ -47,7 +47,7 @@ public class DefaultJwtBuilder implements JwtBuilder {
     private Claims claims;
     private String payload;
 
-    private SignatureAlgorithm algorithm;
+    private SignatureAlgorithm algorithm = SignatureAlgorithm.NONE; //assume unsigned until a key is set
     private Key key;
 
     private Serializer<Map<String,?>> serializer;
@@ -315,21 +315,11 @@ public class DefaultJwtBuilder implements JwtBuilder {
             jwsHeader = (JwsHeader) header;
         } else {
             //noinspection unchecked
-            jwsHeader = new DefaultJwsHeader(header);
+            header = jwsHeader = new DefaultJwsHeader(header);
         }
 
-        if (key != null) {
-            jwsHeader.setAlgorithm(algorithm.getValue());
-        } else {
-            //no signature - plaintext JWT:
-            jwsHeader.setAlgorithm(SignatureAlgorithm.NONE.getValue());
-        }
-
-        if (compressionCodec != null) {
-            jwsHeader.setCompressionAlgorithm(compressionCodec.getAlgorithmName());
-        }
-
-        String base64UrlEncodedHeader = base64UrlEncode(jwsHeader, "Unable to serialize header to json.");
+        Assert.state(algorithm != null, "algorithm instance should never be null."); // invariant
+        jwsHeader.setAlgorithm(algorithm.getValue());
 
         byte[] bytes;
         try {
@@ -339,9 +329,11 @@ public class DefaultJwtBuilder implements JwtBuilder {
         }
 
         if (compressionCodec != null) {
+            header.setCompressionAlgorithm(compressionCodec.getAlgorithmName());
             bytes = compressionCodec.compress(bytes);
         }
 
+        String base64UrlEncodedHeader = base64UrlEncode(jwsHeader, "Unable to serialize header to json.");
         String base64UrlEncodedBody = base64UrlEncoder.encode(bytes);
 
         String jwt = base64UrlEncodedHeader + JwtParser.SEPARATOR_CHAR + base64UrlEncodedBody;

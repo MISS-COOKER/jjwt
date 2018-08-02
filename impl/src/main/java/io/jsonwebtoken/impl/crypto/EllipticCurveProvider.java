@@ -17,6 +17,7 @@ package io.jsonwebtoken.impl.crypto;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.security.Randoms;
 import io.jsonwebtoken.lang.Assert;
 import io.jsonwebtoken.lang.Strings;
 
@@ -68,19 +69,19 @@ public abstract class EllipticCurveProvider extends SignatureProvider {
     /**
      * Generates a new secure-random key pair of sufficient strength for the specified Elliptic Curve {@link
      * SignatureAlgorithm} (must be one of {@code ES256}, {@code ES384} or {@code ES512}) using JJWT's default {@link
-     * SignatureProvider#DEFAULT_SECURE_RANDOM SecureRandom instance}.  This is a convenience method that immediately
+     * Randoms#secureRandom() SecureRandom instance}.  This is a convenience method that immediately
      * delegates to {@link #generateKeyPair(SignatureAlgorithm, SecureRandom)}.
      *
      * @param alg the algorithm indicating strength, must be one of {@code ES256}, {@code ES384} or {@code ES512}
      * @return a new secure-randomly generated key pair of sufficient strength for the specified {@link
      * SignatureAlgorithm} (must be one of {@code ES256}, {@code ES384} or {@code ES512}) using JJWT's default {@link
-     * SignatureProvider#DEFAULT_SECURE_RANDOM SecureRandom instance}.
+     * Randoms#secureRandom() SecureRandom instance}.
      * @see #generateKeyPair()
      * @see #generateKeyPair(SignatureAlgorithm, SecureRandom)
      * @see #generateKeyPair(String, String, SignatureAlgorithm, SecureRandom)
      */
     public static KeyPair generateKeyPair(SignatureAlgorithm alg) {
-        return generateKeyPair(alg, DEFAULT_SECURE_RANDOM);
+        return generateKeyPair(alg, Randoms.secureRandom());
     }
 
     /**
@@ -273,7 +274,7 @@ public abstract class EllipticCurveProvider extends SignatureProvider {
 
         int offset;
 
-        final byte derSignature[];
+        final byte[] derSignature;
 
         if (len < 128) {
             derSignature = new byte[2 + 2 + j + 2 + l];

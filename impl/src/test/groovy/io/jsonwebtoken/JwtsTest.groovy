@@ -16,6 +16,7 @@
 package io.jsonwebtoken
 
 import io.jsonwebtoken.impl.DefaultHeader
+import io.jsonwebtoken.impl.DefaultJweHeader
 import io.jsonwebtoken.impl.DefaultJwsHeader
 import io.jsonwebtoken.impl.compression.DefaultCompressionCodecResolver
 import io.jsonwebtoken.impl.compression.GzipCompressionCodec
@@ -78,6 +79,19 @@ class JwtsTest {
         def header = Jwts.jwsHeader([alg: "HS256"])
         assertTrue header instanceof DefaultJwsHeader
         assertEquals header.getAlgorithm(), 'HS256'
+    }
+
+    @Test
+    void testJweHeaderWithNoArgs() {
+        def header = Jwts.jweHeader()
+        assertTrue header instanceof DefaultJweHeader
+    }
+
+    @Test
+    void testJweHeaderWithMapArg() {
+        def header = Jwts.jweHeader([enc: 'foo'])
+        assertTrue header instanceof DefaultJweHeader
+        assertEquals header.getEncryptionAlgorithm(), 'foo'
     }
 
     @Test
@@ -148,6 +162,8 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT strings must contain exactly 2 period characters. Found: 0"
+//            assertEquals 'Invalid compact JWT string. JWSs must have exactly 2 period characters, ' +
+//                    'JWEs must have exactly 4. Found: 0.', e.message
         }
     }
 
@@ -158,6 +174,8 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT strings must contain exactly 2 period characters. Found: 1"
+//            assertEquals 'Invalid compact JWT string. JWSs must have exactly 2 period characters, ' +
+//                    'JWEs must have exactly 4. Found: 1.', e.message
         }
     }
 
@@ -168,6 +186,7 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT string '..' is missing a body/payload."
+//            assertEquals "Required JWS Protected Header is missing.", e.message
         }
     }
 
@@ -178,6 +197,7 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT string 'foo..' is missing a body/payload."
+//            assertEquals "Required JWS Payload is missing.", e.message
         }
     }
 
@@ -188,6 +208,7 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT string '..bar' is missing a body/payload."
+//            assertEquals "Required JWS Protected Header is missing.", e.message
         }
     }
 
@@ -198,13 +219,13 @@ class JwtsTest {
             fail()
         } catch (MalformedJwtException e) {
             assertEquals e.message, "JWT string 'foo..bar' is missing a body/payload."
+//            assertEquals "Required JWS Payload is missing.", e.message
         }
     }
 
     @Test
     void testWithInvalidCompressionAlgorithm() {
         try {
-
             Jwts.builder().setHeaderParam(Header.COMPRESSION_ALGORITHM, "CUSTOM").setId("andId").compact()
         } catch (CompressionException e) {
             assertEquals "Unsupported compression algorithm 'CUSTOM'", e.getMessage()
@@ -213,7 +234,7 @@ class JwtsTest {
 
     @Test
     void testConvenienceIssuer() {
-        String compact = Jwts.builder().setIssuer("Me").compact();
+        String compact = Jwts.builder().setIssuer("Me").compact()
         Claims claims = Jwts.parserBuilder().build().parse(compact).body as Claims
         assertEquals claims.getIssuer(), "Me"
 

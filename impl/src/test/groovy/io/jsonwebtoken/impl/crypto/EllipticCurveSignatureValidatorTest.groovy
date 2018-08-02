@@ -17,6 +17,7 @@ package io.jsonwebtoken.impl.crypto
 
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.impl.security.Randoms
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.SignatureException
 import org.junit.Test
@@ -43,8 +44,8 @@ class EllipticCurveSignatureValidatorTest {
 
         byte[] bytes = new byte[16]
         byte[] signature = new byte[16]
-        SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(bytes)
-        SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(signature)
+        Randoms.secureRandom().nextBytes(bytes)
+        Randoms.secureRandom().nextBytes(signature)
 
         try {
             v.isValid(bytes, signature)
@@ -100,7 +101,7 @@ class EllipticCurveSignatureValidatorTest {
     void invalidECDSASignatureFormatTest() {
         try {
             def signature = new byte[257]
-            SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(signature)
+            Randoms.secureRandom().nextBytes(signature)
             EllipticCurveProvider.transcodeSignatureToDER(signature)
             fail()
         } catch (JwtException e) {
@@ -119,12 +120,12 @@ class EllipticCurveSignatureValidatorTest {
             }
         }
         def signature = new byte[257]
-        SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(signature)
+        Randoms.secureRandom().nextBytes(signature)
         //invalid type
         signature[0] = 34
         verify(signature)
         def shortSignature = new byte[7]
-        SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(shortSignature)
+        Randoms.secureRandom().nextBytes(shortSignature)
         verify(shortSignature)
         signature[0] = 48
 //        signature[1] = 0x81
@@ -141,7 +142,7 @@ class EllipticCurveSignatureValidatorTest {
     @Test
     void testPaddedSignatureToDER() {
         def signature = new byte[32]
-        SignatureProvider.DEFAULT_SECURE_RANDOM.nextBytes(signature)
+        Randoms.secureRandom().nextBytes(signature)
         signature[0] = 0 as byte
         EllipticCurveProvider.transcodeSignatureToDER(signature) //no exception
     }

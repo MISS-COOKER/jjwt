@@ -86,7 +86,7 @@
     <properties>
 
         <jjwt.root>${basedir}</jjwt.root>
-        <jjwt.previousVersion>0.10.7</jjwt.previousVersion>
+        <jjwt.previousVersion>0.11.0</jjwt.previousVersion>
 
         <maven.jar.version>3.0.2</maven.jar.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
@@ -298,6 +298,15 @@
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
                             <!-- TODO: enable after 1.0 -->
                             <!-- <breakBuildBasedOnSemanticVersioning>true</breakBuildBasedOnSemanticVersioning>-->
+
+                            <!-- All of the following can be removed after 0.11.1 is released: -->
+                            <excludes>
+                                <exclude>io.jsonwebtoken.Header#getAlgorithm()</exclude>
+                                <exclude>io.jsonwebtoken.Header#setAlgorithm(java.lang.String)</exclude>
+                                <exclude>io.jsonwebtoken.JwsHeader#getAlgorithm()</exclude>
+                                <exclude>io.jsonwebtoken.JwsHeader#setAlgorithm(java.lang.String)</exclude>
+                                <exclude>io.jsonwebtoken.lang.Assert#notNull(java.lang.Object,java.lang.String)</exclude>
+                            </excludes>
                         </parameter>
                     </configuration>
                     <executions>
